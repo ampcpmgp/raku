@@ -1,0 +1,63 @@
+import riot from 'riot'
+
+<app-root>
+  <parts-header></parts-header>
+  <h2>{title}</h2>
+  <div>
+    {clickCount}
+  </div>
+  <div>
+    API: {apiData}
+  </div>
+  <img src={droidKun} alt="">
+  <style type="less">
+    :scope {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid;
+    }
+
+    > img {
+      width: 200px;
+    }
+
+    > h2 {
+      color: blue;
+    }
+  </style>
+  <script>
+    import { observe } from 'dob'
+    import axios from 'axios'
+    import './parts/header'
+    import ui from '../state/ui'
+    import Path from '../const/path'
+    import droidKun from '../images/droid-kun.png'
+
+    Object.assign(this, {
+      title: 'Hello, World',
+      droidKun,
+      apiData: null,
+      clickCount: ui.clickCount
+    })
+
+    this.getApi = async () => {
+      try {
+        const {data} = await axios.get(Path.TEST)
+        this.apiData = JSON.stringify(data)
+        this.update()
+      } catch (e) {
+        console.warn('api error')
+      }
+    }
+
+    observe(() => {
+      this.update({
+        clickCount: ui.clickCount
+      })
+    })
+
+    this.on('mount', () => {
+      this.getApi()
+    })
+  </script>
+</app-root>
